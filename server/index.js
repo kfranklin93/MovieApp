@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var _ = require('lodash');
+var db = mongoose.createConnection('localhost', 'Movies');
 
  //Creating the application
  var app = express();
@@ -24,13 +25,13 @@ app.use(function(req, res, next){
 mongoose.connect('mongodb://localhost/movieapp');
 mongoose.connection.once('open', function(){
 
-    //Load the models.
+//Load the models.
 app.models = require('./models/index');
 //Load the routes
-var routes = require(./routes);
-_.each(routes, function(controller, routes){
-
-})
+var routes = require('./routes');
+_.each(routes, function(controller, route){
+app.use(route, controller(app, route));
+});
 
 console.log('Listening on port 3000 ...');
 app.listen(3000);
